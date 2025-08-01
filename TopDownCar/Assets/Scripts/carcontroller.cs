@@ -3,7 +3,9 @@ using UnityEngine;
 
 public class CarController : MonoBehaviour
 {
-    public float rotationSpeed, moveSpeed;
+    [Header("Movement Settings")]
+    public float rotationSpeed = 200f;   // Set this in Inspector
+    public float moveSpeed = 5f;         // Default speed, editable in Inspector
     public Transform cartransform;
 
     [SerializeField] private float currentSpeed;
@@ -18,25 +20,31 @@ public class CarController : MonoBehaviour
         float horizontalMovement = Input.GetAxis("Horizontal");
         float verticalMovement = Input.GetAxis("Vertical");
 
-        // Debug.Log("horizontal:" + horizontalMovement + " vertical:" + verticalMovement);
-
         if (Math.Abs(horizontalMovement) > 0.01f)
         {
-            cartransform.Rotate(0f, 0f, -1 * rotationSpeed * horizontalMovement);
+            cartransform.Rotate(0f, 0f, -rotationSpeed * horizontalMovement * Time.deltaTime);
         }
+
         if (Math.Abs(verticalMovement) > 0.01f)
         {
-            cartransform.Translate(0f, currentSpeed * verticalMovement, 0f);
+            cartransform.Translate(0f, currentSpeed * verticalMovement * Time.deltaTime, 0f);
         }
     }
 
     public void SetBoostedSpeed(float boostedSpeed)
     {
         currentSpeed = boostedSpeed;
+        Debug.Log("Speed boosted to: " + currentSpeed);
     }
 
     public void ResetSpeed()
     {
         currentSpeed = moveSpeed;
+        Debug.Log("Speed reset to: " + currentSpeed);
+    }
+
+    public float GetCurrentSpeed()
+    {
+        return currentSpeed;
     }
 }

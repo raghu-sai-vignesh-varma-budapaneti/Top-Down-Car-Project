@@ -3,19 +3,27 @@ using System.Collections;
 
 public class SpeedBoostZone2D : MonoBehaviour
 {
-    public float boostSpeed = 0.1f;
-    public float boostDuration = 10f;
+    [Header("Boost Settings")]
+    public float boostMultiplier = 2f;         // 2x the current speed
+    public float boostDuration = 10f;          // Duration in seconds
+
+    private bool hasActivated = false;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (hasActivated) return;
+
         CarController car = other.GetComponent<CarController>();
         if (car != null)
         {
-            car.SetBoostedSpeed(boostSpeed);
+            hasActivated = true;
+
+            float boostedSpeed = car.GetCurrentSpeed() * boostMultiplier;
+            car.SetBoostedSpeed(boostedSpeed);
+
             Debug.Log("Speed Boost Activated for " + boostDuration + " seconds");
 
             StartCoroutine(BoostCountdown(car));
-            Destroy(gameObject); // prevent re-use
         }
     }
 
@@ -32,5 +40,7 @@ public class SpeedBoostZone2D : MonoBehaviour
 
         car.ResetSpeed();
         Debug.Log("Speed Boost Deactivated");
+
+        Destroy(gameObject); // Destroy only after boost ends
     }
 }
